@@ -1,0 +1,13 @@
+[Unit]
+Description=Telegram cmd bot
+Documentation=https://github.com/ygcaicn/tg_cmd_bot
+After=network.target nss-lookup.target
+
+[Service]
+User=root
+WorkingDirectory=/root/tg_cmd_bot/
+ExecStart=/root/tg_cmd_bot/appenv/bin/python3.10 /root/tg_cmd_bot/main.py
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
