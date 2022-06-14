@@ -1,5 +1,6 @@
 # Telegram cmd bot
 
+```
 start - Start
 help - Help
 task - Task pool
@@ -12,6 +13,7 @@ bash_verbose - verbose
 bash_polling - polling log(only in quiet mode)
 bash_sigint - Send sigint
 bash_stop - Stop sessions
+```
 
 ```python3
 # Python versions 3.7+
@@ -24,6 +26,8 @@ pip3 install python-telegram-bot --pre
 
 python3 ./main.py
 ```
+
+Youtube 相关操作依赖：[youtube-dl](http://ytdl-org.github.io/youtube-dl/download.html)
 
 ![](images/1.jpg)
 ![](images/2.jpg)
