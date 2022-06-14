@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tg-cmd-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tg-cmd-bot
+  template:
+    metadata:
+      labels:
+        app: tg-cmd-bot
+    spec:
+      containers:
+      - image: okteto.dev/tg_cmd_bot:latest
+        name: tg-cmd-bot
+        ports:
+        - containerPort: 8080
+        env:
+        - name: PORT
+          value: "8080"
+        - name: TOKEN
+          value: "$tg_token"
+        volumeMounts:
+          - mountPath: "/data"
+            name: tg-pv-storage
+      volumes:
+        - name: tg-pv-storage
+          persistentVolumeClaim:
+            claimName: tg-pv-claim
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim        # Create a PersistentVolumeClaim to request a PersistentVolume storage
+metadata:                          # Claim name and labels
+  name: tg-pv-claim
+  labels:
+    app: tg-cmd-bot
+spec:                              # Access mode and resource limits
+  accessModes:
+    - ReadWriteOnce                # ReadWriteOnce means the volume can be mounted as read-write by a single Node
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: tg-cmd-bot
+  annotations:
+    dev.okteto.com/auto-ingress: "true"
+spec:
+  type: ClusterIP  
+  ports:
+  - name: "web"
+    port: 8080
+  selector:
+    app: tg-cmd-bot

@@ -1,0 +1,3 @@
+deploy:
+  - okteto build -t okteto.dev/tg_cmd_bot:latest
+  - envsubst < k8s.yaml | kubectl apply -f -

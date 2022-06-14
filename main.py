@@ -54,6 +54,12 @@ except KeyError:
     logger.error("配置不完整")
     sys.exit(-2)
 
+is_public = False
+if config.get("public"):
+    is_public = True
+    tg_token = os.environ["TOKEN"]
+    os.environ["TOKEN"] = ""
+
 def wait_child(signum, frame):
     logging.info('receive SIGCHLD')
     try:
@@ -78,7 +84,7 @@ signal.signal(signal.SIGCHLD, wait_child)
 def permission_required(func):
     async def wrapper(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user = update.effective_user
-        if user['id'] not in chat_id:
+        if user['id'] not in chat_id and not is_public:
             text = f"Invalid user {user['id']}."
             logger.info(text)
             await update.message.reply_text(text)
