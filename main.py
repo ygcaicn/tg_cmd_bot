@@ -485,7 +485,7 @@ async def youtube(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def youtube_download(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     text = update.message.text
-    cmd = f"youtube-dl \"{text}\""
+    cmd = f"yt-dlp \"{text}\""
     await do_cmd_by_subprocess(update, context, cmd, task_type="youtube_download")
 
 @permission_required

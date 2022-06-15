@@ -23,6 +23,9 @@ cat <<-EOF > /app/bot.cfg
 }
 EOF
 
+wget https://github.com/yt-dlp/yt-dlp/releases/download/2022.05.18/yt-dlp -O /usr/bin/yt-dlp
+chmod +x /usr/bin/yt-dlp
+
 cat /etc/nginx/conf.d/web.conf
 rm -rf /etc/nginx/sites-enabled/default
 nginx
