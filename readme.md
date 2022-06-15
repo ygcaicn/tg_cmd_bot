@@ -4,9 +4,7 @@
 
 [@public_cmd_bot](https://t.me/public_cmd_bot) 
 
-[web](https://tg-cmd-bot-ygcaicn.cloud.okteto.net/)
-
-[![Develop on Okteto](https://okteto.com/develop-okteto.svg)](https://cloud.okteto.com/deploy)
+[web](https://tg-cmd-bot.us.aldryn.io/)
 
 ```
 start - Start
