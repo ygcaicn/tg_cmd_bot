@@ -92,6 +92,20 @@ def permission_required(func):
         await func(update, context)
     return wrapper
 
+def process_edited_message(func):
+    async def wrapper(update: Update, context: ContextTypes.DEFAULT_TYPE):
+        if update.edited_message:
+            update.message = update.edited_message
+            await func(update, context)
+            return
+
+        if not update.message:
+            print("not message")
+            return
+
+        await func(update, context)
+    return wrapper
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(f"Hello!{update.effective_user['id']}")
 
@@ -203,18 +217,22 @@ async def bash(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(reply, disable_web_page_preview = True)
 
 @permission_required
+@process_edited_message
 async def bash_quiet(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     context.user_data["queue"].put("QUIET")
 
 @permission_required
+@process_edited_message
 async def bash_verbose(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     context.user_data["queue"].put("VERBOSE")
 
 @permission_required
+@process_edited_message
 async def bash_polling(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     context.user_data["queue"].put("POLL")
 
 @permission_required
+@process_edited_message
 async def bash_sigint(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if context.user_data.get("sh") is None:
         await update.message.reply_text("no context shell")
@@ -225,6 +243,7 @@ async def bash_sigint(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
         child.send_signal(signal.SIGINT)
 
 @permission_required
+@process_edited_message
 async def bash_stop(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if context.user_data.get("sh") is None:
         await update.message.reply_text("no context shell")
@@ -351,13 +370,6 @@ async def task_polling(update: Update, context: ContextTypes.DEFAULT_TYPE, queue
 @permission_required
 async def task(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     '''创建队列'''
-    if update.edited_message:
-        await update.edited_message.reply_text(f"不支持修改")
-        return
-    if not update.message:
-        print("not message")
-        return
-
     if context.user_data.get("task") is not None:
         await update.message.reply_text(f"已存在任务队列")
         return
@@ -373,14 +385,8 @@ async def task(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(f"任务队列创建成功")
 
 @permission_required
+@process_edited_message
 async def task_list(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    if update.edited_message:
-        await update.edited_message.reply_text(f"不支持修改")
-        return
-    if not update.message:
-        print("not message")
-        return
-
     if context.user_data.get("task"):
         l = context.user_data['task']['list']
         text = "Tasks:\n"
@@ -391,14 +397,8 @@ async def task_list(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await update.message.reply_text(text, disable_web_page_preview = True)
 
 @permission_required
+@process_edited_message
 async def task_signal(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    if update.edited_message:
-        await update.edited_message.reply_text(f"不支持修改")
-        return
-    if not update.message:
-        print("not message")
-        return
-
     if context.user_data.get("task") is None:
         await update.message.reply_text("no task context.")
         return
@@ -421,14 +421,8 @@ async def task_signal(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
             await update.message.reply_text(f"pid:{pid} not in tasks.")
 
 @permission_required
+@process_edited_message
 async def task_kill(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    if update.edited_message:
-        await update.edited_message.reply_text(f"不支持修改")
-        return
-    if not update.message:
-        print("not message")
-        return
-
     pid = []
     for i in context.args:
         try:
@@ -495,6 +489,7 @@ async def youtube_download(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     await do_cmd_by_subprocess(update, context, cmd, task_type="youtube_download")
 
 @permission_required
+@process_edited_message
 async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     print(update.message.text)
     print(context.user_data)
