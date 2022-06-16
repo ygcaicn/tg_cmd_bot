@@ -14,7 +14,7 @@ server {
 }
 EOF
 
-cat <<-EOF > /app/bot.cfg
+cat <<-EOF > /bot.cfg
 {
     "token":"",
     "work_dir": "/data/Downloads",
@@ -30,4 +30,4 @@ cat /etc/nginx/conf.d/web.conf
 rm -rf /etc/nginx/sites-enabled/default
 nginx
 
-python3 /app/main.py
+python3 /main.py

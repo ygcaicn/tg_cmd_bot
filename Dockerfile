@@ -25,9 +25,9 @@ ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US.UTF-8
 
 COPY entrypoint.sh /entrypoint.sh
-COPY main.py /app/
+COPY main.py /main.py
 
 RUN chmod +x /entrypoint.sh \
-    && chmod +x /app/main.py
+    && chmod +x /main.py
 
 CMD /entrypoint.sh
