@@ -6,6 +6,9 @@
 
 [web](https://tg-cmd-bot.us.aldryn.io/)
 
+Youtube 下载专用bot：
+[@ffuck_youtube_bot](https://t.me/ffuck_youtube_bot)
+
 ```
 start - Start
 help - Help
