@@ -89,6 +89,7 @@ def permission_required(func):
             logger.info(text)
             await update.message.reply_text(text)
             return
+        logger.info(user)
         await func(update, context)
     return wrapper
 
@@ -100,7 +101,7 @@ def process_edited_message(func):
             return
 
         if not update.message:
-            print("not message")
+            logger.warning("not message")
             return
 
         await func(update, context)
@@ -213,7 +214,7 @@ async def bash(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     context.user_data["cmd_reply"] = t3
 
     reply = f"Hi! Start bash {sh.pid}"
-    print(reply)
+    logger.info(reply)
     await update.message.reply_text(reply, disable_web_page_preview = True)
 
 @permission_required
@@ -273,7 +274,7 @@ async def bash_stop(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 # Task
 async def handle_youtube(update: Update, context: ContextTypes.DEFAULT_TYPE, proc) -> None:
-    print(f"args:{proc.args} pid:{proc.pid} return:{proc.returncode} poll:{proc.poll()}\n")
+    logger.info(f"args:{proc.args} pid:{proc.pid} return:{proc.returncode} poll:{proc.poll()}\n")
     if proc.returncode != 0:
         text = f"服务器抽风了 pid:{proc.pid} return:{proc.returncode}\n"
 
@@ -296,11 +297,11 @@ async def handle_youtube(update: Update, context: ContextTypes.DEFAULT_TYPE, pro
             l = f"[{f['format_note']} asr:{f['asr']} size:{s}]({f['url']})\n"
             await update.message.reply_markdown(l)
     except json.JSONDecodeError as e:
-        print(e)
+        logger.error(e)
         await update.message.reply_text(f"解析结果出错")
     except Exception as e:
         await update.message.reply_text(f"未知结果出错")
-        print(e)
+        logger.error(e)
 
 async def handle_youtube_download(update: Update, context: ContextTypes.DEFAULT_TYPE, proc) -> None:
     if proc.returncode != 0:
@@ -361,7 +362,7 @@ async def task_polling(update: Update, context: ContextTypes.DEFAULT_TYPE, queue
                 if len(stderr_line):
                     text += "\nstderr:\n" + "".join(stderr_line)
 
-                print(text)
+                logger.info(text)
                 await update.message.reply_text(text, disable_web_page_preview = True)
 
         except Exception as e:
@@ -466,7 +467,7 @@ async def do_cmd_by_subprocess(update: Update, context: ContextTypes.DEFAULT_TYP
         universal_newlines=True,
         bufsize = 0)
     except Exception as e:
-        print(f"do_cmd_by_subprocess:{cmd}\n{e}")
+        logger.info(f"do_cmd_by_subprocess:{cmd}\n{e}")
         await update.message.reply_text(f"{e}", disable_web_page_preview = True)
     else:
         l.append({
@@ -491,8 +492,8 @@ async def youtube_download(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 @permission_required
 @process_edited_message
 async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    print(update.message.text)
-    print(context.user_data)
+    logger.info(update.message.text)
+    logger.info(context.user_data)
 
     text = update.message.text
     if text.startswith("https://"):
@@ -518,7 +519,7 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         return
 
     try:
-        print("try:{}\n".format(text))
+        logger.info("try:{}\n".format(text))
         sh.stdin.write("{}\n".format(text))
     except Exception as e:
         await update.message.reply_text(e, disable_web_page_preview = True)
